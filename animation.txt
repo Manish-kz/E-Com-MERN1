@@ -1,0 +1,9 @@
+ <p className="relative cursor-pointer font-medium group">
+  Children
+  <span className="
+    absolute left-0 bottom-0
+    h-0.5 w-0 bg-black
+    transition-all duration-300
+    group-hover:w-full
+  "></span>
+</p>
