@@ -1,3 +1,5 @@
+import { Link } from "react-router-dom";
+
 function Hero() {
   return (
     <section className="relative w-full aspect-4/5 sm:aspect-video lg:h-screen overflow-hidden">
@@ -20,11 +22,11 @@ function Hero() {
         </h1>
 
         <div className="mt-6 flex gap-4">
-          <button className="bg-white text-black px-6 py-3 rounded-full">
-            Shop Poles
+          <button className="bg-white text-black px-6 py-3 rounded-full cursor-pointer hover:bg-gray-200 transition">
+            <Link to="/equipment">Shop All</Link>
           </button>
-          <button className="border border-white px-6 py-3 rounded-full">
-            Shop Apparel
+          <button className="border border-white px-6 py-3 rounded-full cursor-pointer hover:bg-white/10 transition">
+            <Link to="/men">Shop Men</Link>
           </button>
         </div>
       </div>

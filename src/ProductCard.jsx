@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-
+import { useNavigate } from "react-router-dom";
 function ProductCard({ product }) {
   const [current, setCurrent] = useState(0);
+  const navigate = useNavigate();
 
   const prev = () =>
     setCurrent((i) => (i === 0 ? product.images.length - 1 : i - 1));
@@ -11,14 +12,16 @@ function ProductCard({ product }) {
     setCurrent((i) => (i === product.images.length - 1 ? 0 : i + 1));
 
   return (
-    <div className="flex flex-col w-90 shrink-0 h-170">
+    <div className="flex flex-col w-90 shrink-0 h-170 "
+              onClick={() => navigate(`/equipment`)}
+    >
 
       {/* Image slider */}
       <div className="relative h-110 overflow-hidden rounded-2xl bg-zinc-300">
 
         <img
           src={product.images[current]}
-          className="w-full h-full object-cover transition duration-300"
+          className="w-full h-full object-cover transition duration-300 cursor-pointer"
           alt={product.name}
         />
 

@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import { getHomeSections } from "./api/api";
+import { Link } from "react-router-dom";
 
 function Section() {
   const [cursor, setCursor] = useState({
@@ -9,6 +11,7 @@ function Section() {
     text: "",
   });
 
+
   const handleMove = (e, text) => {
     setCursor({
       visible: true,
@@ -17,10 +20,23 @@ function Section() {
       text,
     });
   };
-
+const routeMap = {
+  winter: "equipment",
+  men: "men",
+  women: "women",
+  kids: "child",
+  child: "child",
+  accessories: "equipment"
+};
   const handleLeave = () => {
     setCursor((prev) => ({ ...prev, visible: false }));
   };
+
+  const [sections, setSections] = useState([]);
+
+  useEffect(() => {
+    getHomeSections().then(setSections);
+  }, []);
 
   return (
     <section className="relative w-full bg-white text-black py-24">
@@ -29,7 +45,7 @@ function Section() {
       {cursor.visible && (
         <motion.div
           className="fixed top-0 left-0 z-50 pointer-events-none"
-          animate={{ x: cursor.x-20, y: cursor.y-20}}
+          animate={{ x: cursor.x - 20, y: cursor.y - 20 }}
           transition={{ type: "tween", stiffness: 300, damping: 25 }}
         >
           <div className="px-5 py-2 bg-black text-white text-sm rounded-full shadow-xl backdrop-blur-md">
@@ -42,65 +58,35 @@ function Section() {
         All-new gear for winter adventures
       </h1>
 
-      {/* Products grid */}
+      {/* Sections Grid */}
       <div className="flex flex-wrap justify-center gap-10 px-15">
 
-        {/* Card 1 */}
-        <div className="w-90">
-          <img
-            src="/images/1.webp"
-            className="w-full h-120 object-cover rounded-xl transition-transform duration-500 hover:scale-105 cursor-none"
-            onMouseMove={(e) => handleMove(e, "View Ski Poles")}
-            onMouseLeave={handleLeave}
-          />
-          <h2 className="text-2xl mt-6 mb-3 font-bold">
-            Ski Poles that don't suck
-          </h2>
-          <p className="text-lg mb-3">
-            Our award-winning magnetic poles for double blacks and bunny slopes.
-          </p>
-          <a className="underline underline-offset-4 cursor-pointer">
-            Shop Ski Poles
-          </a>
-        </div>
+        {sections.map((item) => (
+          <Link
+            to={`/${routeMap[item.category] || item.category}`}
+            key={item._id}
+            className="group block cursor-pointer w-90"
+          >
+            <img
+              src={item.image}
+              className="w-full h-120 object-cover rounded-xl transition-transform duration-500 group-hover:scale-105"
+              onMouseMove={(e) => handleMove(e, `Shop ${item.category}`)}
+              onMouseLeave={handleLeave}
+            />
 
-        {/* Card 2 */}
-        <div className="w-90">
-          <img
-            src="/images/2.webp"
-            className="w-full h-120 object-cover rounded-xl transition-transform duration-500 hover:scale-105 cursor-none"
-            onMouseMove={(e) => handleMove(e, "Explore Apparel")}
-            onMouseLeave={handleLeave}
-          />
-          <h2 className="text-2xl mt-6 mb-3 font-bold">
-            Apparel that takes you from the mountain to the lodge
-          </h2>
-          <p className="text-lg mb-3">
-            Cozy merino wool layers for cold days outside
-          </p>
-          <a className="underline underline-offset-4 cursor-pointer">
-            Shop Technical Apparel
-          </a>
-        </div>
+            <h2 className="text-2xl mt-6 mb-3 font-bold">
+              {item.title}
+            </h2>
 
-        {/* Card 3 */}
-        <div className="w-90">
-          <img
-            src="/images/3.webp"
-            className="w-full h-120 object-cover rounded-xl transition-transform duration-500 hover:scale-105 cursor-none"
-            onMouseMove={(e) => handleMove(e, "Shop Bags")}
-            onMouseLeave={handleLeave}
-          />
-          <h2 className="text-2xl mt-6 mb-3 font-bold">
-            Your new do-it-all bag
-          </h2>
-          <p className="text-lg mb-3">
-            Rugged enough for the mountains, but sleek enough for everyday life.
-          </p>
-          <a className="underline underline-offset-4 cursor-pointer">
-            Shop Bags
-          </a>
-        </div>
+            <p className="text-lg mb-3">
+              {item.description}
+            </p>
+
+            <span className="underline underline-offset-4">
+              Shop {item.category}
+            </span>
+          </Link>
+        ))}
 
       </div>
     </section>

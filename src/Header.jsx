@@ -1,241 +1,198 @@
-// import React, { useState } from "react";
-// import { ShoppingBag } from "lucide-react";
-// import { Link } from "react-router-dom";
-
-// function Header() {
-//   const [menuOpen, setMenuOpen] = useState(false);
-
-//   return (
-//     <section className="relative w-full overflow-hidden">
-
-//       {/* HERO WRAPPER */}
-//       <div className="relative w-full aspect-4/5 sm:aspect-video lg:h-screen">
-
-//         {/* VIDEO */}
-//         <video
-//           src="/public/video.mp4"
-//           autoPlay
-//           loop
-//           muted
-//           playsInline
-//           className="absolute inset-0 w-full h-full object-cover"
-//         />
-//         <div className="absolute inset-0 bg-black/30" />
-
-//        {/* NAVBAR */}
-// <header className="absolute top-6 left-0 w-full z-50 text-black">
-//   <div className="max-w-6xl mx-auto px-4">
-
-//     <div className="relative flex items-center h-14 rounded-full bg-[#fffbe8] px-5">
-
-//       {/* LEFT */}
-//       <div className="flex items-center gap-6">
-//         {/* Hamburger (mobile only) */}
-//         <button
-//           className="lg:hidden relative w-6 h-6 cursor-pointer"
-//           onClick={() => setMenuOpen(!menuOpen)}
-//         >
-//           <span className="absolute top-1/2 w-full h-0.5 bg-black -translate-y-2 transition-all" />
-//           <span className="absolute top-1/2 w-full h-0.5 bg-black transition-all" />
-//           <span className="absolute top-1/2 w-full h-0.5 bg-black translate-y-2 transition-all" />
-//         </button>
-
-//         {/* DESKTOP NAV (RESTORED) */}
-//        <nav className="hidden lg:flex gap-6 text-sm font-medium">
-//           {[
-//             { name: "Equipment", path: "/equipment" },
-//             { name: "Men", path: "/men" },
-//             { name: "Women", path: "/women" },
-//             { name: "Child", path: "/child" },
-//           ].map((item) => (
-//             <Link
-//               key={item.name}
-//               to={item.path}
-//               className="relative cursor-pointer group"
-//             >
-//               {item.name}
-//               <span className="absolute left-0 -bottom-1 h-0.5 w-0 bg-black transition-all duration-300 group-hover:w-full" />
-//             </Link>
-//           ))}
-//         </nav>
-//       </div>
-
-//       {/* CENTER LOGO */}
-//       <div className="absolute left-1/2 -translate-x-1/2 font-bold text-xl">
-//         Fashion Hunt
-//       </div>
-
-//       {/* RIGHT */}
-//       <div className="ml-auto flex items-center gap-2">
-//         <ShoppingBag size={24} />
-//       </div>
-
-//     </div>
-
-//     {/* MOBILE DROPDOWN (unchanged) */}
-//     <div
-//       className={`overflow-hidden transition-all duration-500 ease-out cursor-pointer lg:hidden ${
-//         menuOpen ? "max-h-100 mt-4" : "max-h-0"
-//       }`}
-//     >
-//       <div className="bg-[#fffbe8] rounded-3xl px-6 py-8 space-y-6">
-//         {["Equipment", "Men", "Women", "Stuff"].map((item, i) => (
-//           <div
-//             key={item}
-//             className="flex items-center justify-between text-4xl font-serif text-[#2b1d0e] opacity-0 animate-menu"
-//             style={{ animationDelay: `${i * 100 + 100}ms` }}
-//           >
-//             <span>{item}</span>
-//             <span className="text-3xl">+</span>
-//           </div>
-//         ))}
-//       </div>
-//     </div>
-
-//   </div>
-// </header>
-
-
-//         {/* HERO CONTENT */}
-//         <div className="absolute inset-0 flex flex-col items-center justify-center text-white text-center px-6">
-//           <h1 className="text-2xl sm:text-4xl lg:text-6xl font-bold max-w-3xl">
-//             Clever gear for epic days outside
-//           </h1>
-
-//           <div className="mt-6 flex gap-4">
-//             <button className="bg-white text-black px-6 py-3 rounded-full">
-//               Shop Poles
-//             </button>
-//             <button className="border border-white px-6 py-3 rounded-full">
-//               Shop Apparel
-//             </button>
-//           </div>
-//         </div>
-
-//       </div>
-
-//       {/* ANIMATION */}
-//       <style>
-//         {`
-//           @keyframes menuFade {
-//             from {
-//               opacity: 0;
-//               transform: translateY(12px);
-//             }
-//             to {
-//               opacity: 1;
-//               transform: translateY(0);
-//             }
-//           }
-//           .animate-menu {
-//             animation: menuFade 0.4s ease forwards;
-//           }
-//         `}
-//       </style>
-
-//     </section>
-//   );
-// }
-
-// export default Header;
-
-import React, { useState } from "react";
-import { ShoppingBag } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { ShoppingBag, X } from "lucide-react";
 import { Link } from "react-router-dom";
+import { useCart } from "./context/UseCart";
+import { useNavigate } from "react-router-dom";
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const { cart, isOpen, setIsOpen, removeFromCart, updateQty } = useCart();
+  const navigate = useNavigate();
+
+  const navLinks = [
+    { name: "Accessories", path: "/equipment" },
+    { name: "Men", path: "/men" },
+    { name: "Women", path: "/women" },
+    { name: "Child", path: "/child" },
+  ];
+
+  // Lock body scroll when cart open
+  useEffect(() => {
+    document.body.style.overflow = isOpen ? "hidden" : "";
+  }, [isOpen]);
+
+  const total = cart.reduce((sum, item) => sum + item.price * item.qty, 0);
 
   return (
-    <header className="fixed top-6 left-0 w-full z-50 text-black">
-      <div className="max-w-6xl mx-auto px-4">
+    <>
+      {/* ================= HEADER ================= */}
+      <header className="absolute top-10 w-full z-50 text-black">
+        <div className="relative max-w-6xl mx-auto px-4 sm:px-6">
+          <div className="relative flex items-center h-14 rounded-full bg-white px-5">
 
-        <div className="relative flex items-center h-14 rounded-full bg-[#fffbe8] px-5">
+            {/* LEFT */}
+            <div className="flex items-center gap-6">
+              <button
+                className="lg:hidden relative w-6 h-6"
+                onClick={() => setMenuOpen((v) => !v)}
+              >
+                <span className="absolute top-1/2 w-full h-0.5 bg-black -translate-y-2" />
+                <span className="absolute top-1/2 w-full h-0.5 bg-black" />
+                <span className="absolute top-1/2 w-full h-0.5 bg-black translate-y-2" />
+              </button>
 
-          {/* LEFT */}
-          <div className="flex items-center gap-6">
-            {/* Hamburger (mobile only) */}
-            <button
-              className="lg:hidden relative w-6 h-6 cursor-pointer"
-              onClick={() => setMenuOpen(!menuOpen)}
+              <nav className="hidden lg:flex gap-6 text-sm font-medium">
+                {navLinks.map((item) => (
+                  <Link key={item.name} to={item.path} className="relative group">
+                    {item.name}
+                    <span className="absolute left-0 -bottom-1 h-0.5 w-0 bg-black transition-all group-hover:w-full" />
+                  </Link>
+                ))}
+              </nav>
+            </div>
+
+            {/* LOGO */}
+            <div className="absolute left-1/2 -translate-x-1/2 font-bold text-xl">
+              <Link to="/">Fashion Hunt</Link>
+            </div>
+
+            {/* CART ICON */}
+            <div
+              className="ml-auto cursor-pointer relative"
+              onClick={() => setIsOpen(true)}
             >
-              <span className="absolute top-1/2 w-full h-0.5 bg-black -translate-y-2 transition-all" />
-              <span className="absolute top-1/2 w-full h-0.5 bg-black transition-all" />
-              <span className="absolute top-1/2 w-full h-0.5 bg-black translate-y-2 transition-all" />
-            </button>
+              <ShoppingBag size={24} className="cursor-pointer" />
+              {cart.length > 0 && (
+                <span className="absolute -top-2 -right-2 bg-black text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+                  {cart.length}
+                </span>
+              )}
+            </div>
+          </div>
 
-            {/* DESKTOP NAV */}
-            <nav className="hidden lg:flex gap-6 text-sm font-medium">
-              {[
-                { name: "Equipment", path: "/equipment" },
-                { name: "Men", path: "/men" },
-                { name: "Women", path: "/women" },
-                { name: "Child", path: "/child" },
-              ].map((item) => (
+          {/* MOBILE MENU */}
+          <div
+            className={`lg:hidden absolute left-0 right-0 top-full mt-4 transition-all duration-300 cursor-pointer ${
+              menuOpen
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 -translate-y-2 pointer-events-none"
+            }`}
+          >
+            <div className="bg-[#fffbe8] rounded-3xl px-6 py-8 space-y-6 shadow-lg cursor-pointer">
+              {navLinks.map((item, i) => (
                 <Link
                   key={item.name}
                   to={item.path}
-                  className="relative cursor-pointer group"
+                  onClick={() => setMenuOpen(false)}
+                  className="flex justify-between text-2xl font-serif cursor-pointer"
+                  style={{ animationDelay: `${i * 100}ms` }}
                 >
-                  {item.name}
-                  <span className="absolute left-0 -bottom-1 h-0.5 w-0 bg-black transition-all duration-300 group-hover:w-full" />
+                  <span>{item.name}</span>
+                  <span>+</span>
                 </Link>
               ))}
-            </nav>
-          </div>
-
-          {/* CENTER LOGO */}
-          <div className="absolute left-1/2 -translate-x-1/2 font-bold text-xl">
-            Fashion Hunt
-          </div>
-
-          {/* RIGHT */}
-          <div className="ml-auto flex items-center gap-2">
-            <ShoppingBag size={24} />
+            </div>
           </div>
         </div>
+      </header>
 
-        {/* MOBILE DROPDOWN */}
-        <div
-          className={`overflow-hidden transition-all duration-500 ease-out lg:hidden ${
-            menuOpen ? "max-h-100 mt-4" : "max-h-0"
-          }`}
-        >
-          <div className="bg-[#fffbe8] rounded-3xl px-6 py-8 space-y-6">
-            {["Equipment", "Men", "Women", "Stuff"].map((item, i) => (
-              <div
-                key={item}
-                className="flex items-center justify-between text-4xl font-serif text-[#2b1d0e] opacity-0 animate-menu"
-                style={{ animationDelay: `${i * 100 + 100}ms` }}
+      {/* ================= CART DRAWER ================= */}
+      {isOpen && (
+        <div className="fixed inset-0 z-[999] text-black">
+          <div
+            className="absolute inset-0 bg-black/40 backdrop-blur-sm"
+            onClick={() => setIsOpen(false)}
+          />
+
+          <div className="absolute right-0 top-0 h-full bg-white w-full sm:w-[420px]">
+
+            {/* HEADER */}
+            <div className="flex items-center justify-between px-6 h-16 border-b">
+              <span className="text-lg">Bag</span>
+              <button onClick={() => setIsOpen(false)}>
+                <X size={22} />
+              </button>
+            </div>
+
+            {/* CONTENT */}
+            <div className="px-6 py-6 space-y-6 overflow-y-auto h-[calc(100vh-240px)]">
+              {cart.length === 0 && (
+                <h2 className="text-2xl font-serif font-bold">
+                  Your Cart Is Empty
+                </h2>
+              )}
+
+              {cart.map((item) => (
+                <div key={item._id + item.size} className="flex gap-4">
+                  <img
+                    src={item.image}
+                    className="w-20 h-24 object-cover rounded-xl"
+                  />
+
+                  <div className="flex-1">
+                    <h3 className="font-medium">{item.title}</h3>
+                    <p className="text-sm text-gray-500">Size: {item.size}</p>
+
+                    <div className="flex items-center gap-4 mt-2">
+                      <button
+                        onClick={() =>
+                          updateQty(item._id, item.size, item.qty - 1)
+                        }
+                        className="w-7 h-7 border rounded-full"
+                      >
+                        −
+                      </button>
+
+                      <span>{item.qty}</span>
+
+                      <button
+                        onClick={() =>
+                          updateQty(item._id, item.size, item.qty + 1)
+                        }
+                        className="w-7 h-7 border rounded-full"
+                      >
+                        +
+                      </button>
+                    </div>
+
+                    <button
+                      onClick={() => removeFromCart(item._id, item.size)}
+                      className="text-sm underline mt-2"
+                    >
+                      Remove
+                    </button>
+                  </div>
+
+                  <p className="font-semibold">
+                    ${item.price * item.qty}
+                  </p>
+                </div>
+              ))}
+            </div>
+
+            {/* FOOTER */}
+            {cart.length > 0 && (
+              <div className="absolute bottom-0 w-full px-6 pb-6 border-t pt-6">
+                <div className="flex justify-between mb-4">
+                  <span>Total</span>
+                  <span className="font-semibold">₹{total}</span>
+                </div>
+
+              <button
+                onClick={() => {
+                  setIsOpen(false);
+                  navigate("/checkout");
+                }}
+                className="w-full py-4 rounded-full bg-[#2b1d0e] text-white cursor-pointer"
               >
-                <span>{item}</span>
-                <span className="text-3xl">+</span>
+                Checkout
+              </button>
               </div>
-            ))}
+            )}
           </div>
         </div>
-
-      </div>
-
-      {/* ANIMATION */}
-      <style>
-        {`
-          @keyframes menuFade {
-            from {
-              opacity: 0;
-              transform: translateY(12px);
-            }
-            to {
-              opacity: 1;
-              transform: translateY(0);
-            }
-          }
-          .animate-menu {
-            animation: menuFade 0.4s ease forwards;
-          }
-        `}
-      </style>
-    </header>
+      )}
+    </>
   );
 }
 
