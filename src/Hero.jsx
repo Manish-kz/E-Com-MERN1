@@ -6,7 +6,7 @@ function Hero() {
 
       {/* VIDEO */}
       <video
-        src="/video.mp4"
+        src="https://www.pexels.com/download/video/9894814/"
         autoPlay
         loop
         muted
