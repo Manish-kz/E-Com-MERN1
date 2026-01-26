@@ -56,7 +56,7 @@ export default function ProductPage() {
         </h1>
 
         <p className="text-lg font-semibold mb-6">
-          ₹{product.price}
+          ${product.price}
         </p>
 
         <p className="text-gray-600 leading-relaxed max-w-xl mb-10">

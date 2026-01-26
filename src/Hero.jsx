@@ -6,7 +6,7 @@ function Hero() {
 
       {/* VIDEO */}
       <video
-        src="/public/video.mp4"
+        src="/video.mp4"
         autoPlay
         loop
         muted

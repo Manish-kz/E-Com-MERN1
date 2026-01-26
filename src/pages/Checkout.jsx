@@ -99,7 +99,7 @@ function Checkout() {
                 </div>
 
                 <span className="font-semibold">
-                  ₹{item.price * item.qty}
+                  ${item.price * item.qty}
                 </span>
               </div>
             ))}
@@ -108,11 +108,11 @@ function Checkout() {
           <div className="border-t mt-6 pt-4 space-y-2">
             <div className="flex justify-between">
               <span>Subtotal</span>
-              <span>₹{subtotal}</span>
+              <span>${subtotal}</span>
             </div>
             <div className="flex justify-between font-semibold text-lg">
               <span>Total</span>
-              <span>₹{subtotal}</span>
+              <span>${subtotal}</span>
             </div>
           </div>
         </div>
