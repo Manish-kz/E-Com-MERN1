@@ -1,0 +1,39 @@
+name: MERN CI
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1. Checkout repo
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    # 2. Setup Node
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: 18
+
+    # ---------- Backend ----------
+    - name: Install backend dependencies
+      working-directory: backend
+      run: npm install
+
+    - name: Backend tests
+      working-directory: backend
+      run: npm test
+      continue-on-error: true   # remove if you want strict CI
+
+    # ---------- Frontend ----------
+    - name: Install frontend dependencies
+      run: npm install
+
+    - name: Build frontend (Vite)
+      run: npm run build
