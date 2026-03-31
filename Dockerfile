@@ -1,5 +1,5 @@
 # ========================
-# Frontend build stage
+# New Frontend build stage
 # ========================
 FROM node:18-alpine AS frontend-build
 
